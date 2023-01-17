@@ -131,3 +131,6 @@ dmypy.json
 # never save credentials file
 secrets.py
 log.txt
+
+# vscode settings
+.vscode/
