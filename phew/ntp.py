@@ -1,7 +1,7 @@
 import machine, time, usocket, struct
 
 def fetch(synch_with_rtc=True, timeout=10):
-  ntp_host = "pool.ntp.org"
+  ntp_host = "time.cifelli.xyz"
 
   timestamp = None
   try:
