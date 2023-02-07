@@ -12,37 +12,37 @@ using the [Raspberry Pi Pico W](https://shop.pimoroni.com/products/raspberry-pi-
 
 - [**phew!** the Pico (or Python) HTTP Endpoint Wrangler](#phew-the-pico-or-python-http-endpoint-wrangler)
   - [What **phew!** does:](#what-phew-does)
+  - [How to use](#How-to-use)
   - [Basic example](#basic-example)
   - [Function reference](#function-reference)
     - [server module](#server-module)
-      - [add_route](#add_route)
-      - [set_catchall](#set_catchall)
+      - [add\_route](#add_route)
+      - [set\_catchall](#set_catchall)
       - [run](#run)
     - [Types](#types)
       - [Request](#request)
       - [Response](#response)
         - [Shorthand](#shorthand)
     - [Templates](#templates)
-      - [render_template](#render_template)
+      - [render\_template](#render_template)
       - [Template expressions](#template-expressions)
         - [Variables](#variables)
         - [Conditional display](#conditional-display)
         - [Includes](#includes)
     - [logging module](#logging-module)
       - [log(level, text)](#loglevel-text)
-      - [debug(*items)](#debugitems)
-      - [info(*items)](#infoitems)
-      - [warn(*items)](#warnitems)
-      - [error(*items)](#erroritems)
-      - [set_truncate_thresholds(truncate_at, truncate_to)](#set_truncate_thresholdstruncate_at-truncate_to)
+      - [debug(\*items)](#debugitems)
+      - [info(\*items)](#infoitems)
+      - [warn(\*items)](#warnitems)
+      - [error(\*items)](#erroritems)
+      - [set\_truncate\_thresholds(truncate\_at, truncate\_to)](#set_truncate_thresholdstruncate_at-truncate_to)
     - [dns module](#dns-module)
-      - [run_catchall](#run_catchall)
-    - [ntp module](#ntp-module)
-      - [fetch](#fetch)
+      - [run\_catchall](#run_catchall)
     - [Helper functions](#helper-functions)
-      - [connect_to_wifi](#connect_to_wifi)
-      - [access_point](#access_point)
-      - [is_connected_to_wifi](#is_connected_to_wifi)
+      - [connect\_to\_wifi](#connect_to_wifi)
+      - [access\_point](#access_point)
+      - [is\_connected\_to\_wifi](#is_connected_to_wifi)
+      - [get\_ip\_address](#get_ip_address)
 
 ## What **phew!** does:
 
@@ -61,6 +61,10 @@ using the [Raspberry Pi Pico W](https://shop.pimoroni.com/products/raspberry-pi-
 Where possible **phew!** tries to minimise the amount of code and setup that you,
 the developer, has to do in favour of picking sane defaults and hiding away bits
 of minutiae that rarely needs to be tweaked.
+
+## How to use
+
+**phew!** can be installed using [pip](https://pypi.org/project/micropython-phew/) from the command line or from your favourite IDE. In Thonny this can be achieved by clicking `Tools` -> `Manage packages` and searching for `micropython-phew`.
 
 ## Basic example
 
@@ -141,7 +145,7 @@ server.set_catchall(my_catchall)
 Or, alternatively, using a decorator:
 
 ```python
-@server.set_catchall()
+@server.catchall()
 def my_catchall(request):
   return "No matching route", 404
 ```
@@ -183,7 +187,7 @@ Handler functions provided to `add_route` and `set_catchall` will recieve a
 At the time your route handler is being called the request has been fully parsed and you can access any properties that are relevant to the request (e.g. the `form` dictionary for a `multipart/form-data` request) any irrelevant properties will be set to `None`.
 
 ```python
-@server.add_route("/login", ["POST"])
+@server.route("/login", ["POST"])
 def login_form(request):
   username = request.form.get("username", None)
   password = request.form.get("password", None)
@@ -215,7 +219,7 @@ of shorthand forms to avoid writing the boilerplate needed.
 |body|`"this is the response body"`|string or generator|the content to be returned|
 
 ```python
-@server.add_route("/greeting/<name>", ["GET"])
+@server.route("/greeting/<name>", ["GET"])
 def user_details(request):
   return Response(f"Hello, {name}", status=200, {"Content-Type": "text/html"})
 ```
@@ -232,7 +236,7 @@ one and three values:
 For example:
 
 ```python
-@server.add_route("/greeting/<name>", ["GET"])
+@server.route("/greeting/<name>", ["GET"])
 def user_details(request, name):
   return f"Hello, {name}", 200
 ```
@@ -415,22 +419,6 @@ dns.run_catchall(ip_address)
 
 Pass in the IP address of your device once in access point mode.
 
-### ntp module
-
-It's often important to synchronise readings with the correct time. This module makes fetching the time from ntp.pool.org simple and can optionally synchronise the internal clock.
-
-#### fetch
-
-```python
-timestamp = ntp.fetch(synch_with_rtc=True, timeout=10)
-```
-
-Returns a tuple with the current date and time - the return value is the same as that returned by `time.gmtime()` from the standard library.
-
-```python
-(year, month, day, hour, minute, second, weekday, yearday)
-```
-
 ### Helper functions
 
 #### connect_to_wifi
@@ -458,3 +446,11 @@ result = is_connected_to_wifi()
 ```
 
 Returns `True` if there is an active WiFi connection.
+
+#### get_ip_address
+
+```python
+get_ip_address()
+```
+
+Returns the current IP address if connected to a network or acting as an access point or `None` otherwise.
